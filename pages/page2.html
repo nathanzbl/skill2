@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Why 404 is the Best Core Class</title>
+    <style>
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.45; padding: 2rem; max-width: 800px; margin: auto; }
+        header h1 { margin: 0 0 0.25rem 0; transition: transform 300ms ease; }
+        nav a { margin-right: 1rem; color: #0a66c2; text-decoration: none; }
+        nav a:hover { text-decoration: underline; }
+        ul { margin-top: 0.5rem; }
+        .calls { background: #f6f8fa; padding: 1rem; border-radius: 6px; }
+        /* Controls */
+        .controls {
+            position: fixed;
+            right: 1rem;
+            top: 1rem;
+            display: flex;
+            gap: .5rem;
+            z-index: 9999;
+        }
+        .btn {
+            background: #0a66c2;
+            color: #fff;
+            border: none;
+            padding: .5rem .75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn.secondary { background: #6b7280; }
+        /* Party animations */
+        @keyframes floaty { 0% {transform: translateY(0)} 50% {transform: translateY(-6px) rotate(-2deg)} 100% {transform: translateY(0)} }
+        .party h1 { animation: floaty 600ms infinite ease-in-out; transform-origin: center; }
+        .bounce { animation: floaty 600ms infinite ease-in-out; }
+        /* Confetti pieces */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 14px;
+            opacity: 0.95;
+            pointer-events: none;
+            z-index: 9998;
+            border-radius: 2px;
+            transform: translateY(-100vh) rotate(0deg);
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(520deg);
+                opacity: 0.1;
+            }
+        }
+        /* Silly cursor follower */
+        .follower {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 20px;
+            transform: translate(-50%, -150%);
+            transition: transform 60ms linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls" aria-hidden="true">
+        <button id="partyBtn" class="btn">Start 404 Party</button>
+        <button id="whoopsBtn" class="btn secondary">Make it silly</button>
+    </div>
+
+    <header>
+        <h1 id="mainTitle">404: The Best Core Class</h1>
+        <p class="calls">Practical, memorable, and directly useful — here's why 404 stands out.</p>
+    </header>
+
+    <section>
+        <h2>Why 404 wins</h2>
+        <ul id="reasons">
+            <li><strong>Hands-on learning:</strong> Labs and real debugging exercises build immediately usable skills.</li>
+            <li><strong>Problem-driven:</strong> Students learn to diagnose and fix real problems, which transfers to any tech role.</li>
+            <li><strong>Teamwork & communication:</strong> Group projects mimic workplace collaboration more than isolated theory.</li>
+            <li><strong>Fast feedback loop:</strong> Quick iterations mean faster learning and stronger retention.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Why 402, 403, and 415 are weaker choices</h2>
+        <ul id="others">
+            <li><strong>402:</strong> Often heavy on theory with fewer practical projects — students may struggle to see immediate value.</li>
+            <li><strong>403:</strong> Can be rigid in scope and assessment, limiting creative problem-solving practice.</li>
+            <li><strong>415:</strong> Sometimes focuses on legacy tools or narrow specifications that don't match current industry workflows.</li>
+        </ul>
+    </section>
+
+    <footer style="margin-top:1.25rem">
+        <nav>
+            <a href="../index.html">Home</a>
+            <a href="../mysql.html">MySQL</a>
+            <a href="../extra.html">Extra</a>
+        </nav>
+    </footer>
+
+    <script>
+        // GitHub Copilot
+        (function () {
+            const partyBtn = document.getElementById('partyBtn');
+            const whoopsBtn = document.getElementById('whoopsBtn');
+            const body = document.body;
+            const title = document.getElementById('mainTitle');
+            const reasons = document.getElementById('reasons');
+            const others = document.getElementById('others');
+
+            let party = false;
+            let confettiInterval = null;
+            let flipInterval = null;
+            let originalTitle = document.title;
+            let follower = null;
+            let followerActive = false;
+
+            function rand(min, max){ return Math.random() * (max - min) + min; }
+
+            function spawnConfetti() {
+                const colors = ['#EF4444','#F97316','#F59E0B','#10B981','#3B82F6','#8B5CF6','#EC4899'];
+                const el = document.createElement('div');
+                el.className = 'confetti';
+                el.style.background = colors[Math.floor(Math.random() * colors.length)];
+                el.style.left = rand(0, 100) + 'vw';
+                el.style.top = '-10vh';
+                el.style.width = (8 + Math.random() * 12) + 'px';
+                el.style.height = (10 + Math.random() * 16) + 'px';
+                el.style.animationDuration = (1.2 + Math.random() * 1.6) + 's';
+                el.style.transform = 'translateY(-100vh) rotate(' + rand(0,360) + 'deg)';
+                document.body.appendChild(el);
+                setTimeout(()=> el.remove(), 3000);
+            }
+
+            function startParty() {
+                if (party) return;
+                party = true;
+                body.classList.add('party');
+                partyBtn.textContent = 'Stop 404 Party';
+                document.title = '🎉 404 Party!';
+                confettiInterval = setInterval(spawnConfetti, 120);
+                // bounce list items
+                [...reasons.children, ...others.children].forEach(li => li.classList.add('bounce'));
+                // playful title changes
+                let alt = false;
+                flipInterval = setInterval(() => {
+                    title.textContent = alt ? '404: The Best Core Class' : '💥 404 Rocks!';
+                    alt = !alt;
+                }, 900);
+            }
+
+            function stopParty() {
+                party = false;
+                body.classList.remove('party');
+                partyBtn.textContent = 'Start 404 Party';
+                document.title = originalTitle;
+                clearInterval(confettiInterval);
+                confettiInterval = null;
+                clearInterval(flipInterval);
+                flipInterval = null;
+                [...reasons.children, ...others.children].forEach(li => li.classList.remove('bounce'));
+                title.textContent = '404: The Best Core Class';
+            }
+
+            partyBtn.addEventListener('click', () => {
+                if (party) stopParty(); else startParty();
+            });
+
+            // "Make it silly" toggles a cursor-following 404 emoji and periodically swaps list text to silly variants
+            const sillyAlternates = [
+                '🛠️ Debugging dojo!',
+                '👾 Glitch gymnastics!',
+                '🍕 Pizza-powered labs!',
+                '🤝 Team-up treasure hunts!',
+                '⚡ Rapid-fire feedback!'
+            ];
+            let flipTextInterval = null;
+            function createFollower() {
+                if (follower) return;
+                follower = document.createElement('div');
+                follower.className = 'follower';
+                follower.textContent = '404 👻';
+                document.body.appendChild(follower);
+                window.addEventListener('mousemove', onMove);
+            }
+            function removeFollower() {
+                if (!follower) return;
+                window.removeEventListener('mousemove', onMove);
+                follower.remove();
+                follower = null;
+            }
+            function onMove(e) {
+                if (!follower) return;
+                follower.style.left = e.clientX + 'px';
+                follower.style.top = e.clientY + 'px';
+            }
+
+            whoopsBtn.addEventListener('click', () => {
+                followerActive = !followerActive;
+                whoopsBtn.textContent = followerActive ? 'Calm it down' : 'Make it silly';
+                if (followerActive) {
+                    createFollower();
+                    // start swapping list item texts
+                    flipTextInterval = setInterval(() => {
+                        const all = [...reasons.children, ...others.children];
+                        const i = Math.floor(Math.random() * all.length);
+                        const el = all[i];
+                        const original = el.dataset.original || el.innerHTML;
+                        if (!el.dataset.original) el.dataset.original = original;
+                        el.innerHTML = Math.random() > 0.5 ? sillyAlternates[Math.floor(Math.random()*sillyAlternates.length)] : original;
+                    }, 700);
+                } else {
+                    removeFollower();
+                    clearInterval(flipTextInterval);
+                    flipTextInterval = null;
+                    // restore originals
+                    [...reasons.children, ...others.children].forEach(el => {
+                        if (el.dataset.original) el.innerHTML = el.dataset.original;
+                    });
+                }
+            });
+
+            // Small Easter-egg: press "4" quickly twice to toggle party
+            let last4 = 0;
+            window.addEventListener('keydown', (e) => {
+                if (e.key === '4') {
+                    const now = Date.now();
+                    if (now - last4 < 350) {
+                        party ? stopParty() : startParty();
+                    }
+                    last4 = now;
+                }
+            });
+
+            // Clean up when navigating away (for single-page-ish usage)
+            window.addEventListener('beforeunload', () => {
+                clearInterval(confettiInterval);
+                clearInterval(flipInterval);
+                clearInterval(flipTextInterval);
+            });
+        })();
+    </script>
+</body>
+</html></ul>

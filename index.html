@@ -1,11 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Nathan — Simplified</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* small helper so blank image spots look consistent */
+        .img-spot { background: linear-gradient(135deg,#eef2ff,#ffe4f0); border-radius: .5rem; display:block; width:100%; height:220px; object-fit:cover; }
+    </style>
 </head>
-<body>
-    Hi this is Nathan
+<body class="bg-slate-50 text-slate-800 antialiased">
+    <header class="max-w-4xl mx-auto px-6 py-6 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold">N</div>
+            <span class="font-semibold text-lg">Nathan</span>
+        </a>
+
+        <!-- minimal required links -->
+        <nav class="flex items-center gap-4 text-sm text-slate-600">
+            <a href="/mysql.html" class="hover:text-slate-900">MySQL</a>
+            <a href="/extra.html" class="hover:text-slate-900">Extra</a>
+            <a href="/pages/page2.html" class="hover:text-slate-900">Subdirectory page</a>
+        </nav>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+            <section>
+                <h1 class="text-3xl font-extrabold text-slate-900 mb-4">Project links and image spots</h1>
+                <p class="text-slate-600 mb-6">Below are the required project pages. Replace the image placeholders with your own visuals to make the page look nice.</p>
+
+                <ul class="list-disc list-inside space-y-2 text-slate-700">
+                    <li><a href="/mysql.html" class="text-indigo-600 hover:underline">MySQL demo and screenshots (required)</a></li>
+                    <li><a href="/extra.html" class="text-indigo-600 hover:underline">Extra work explanation (required)</a></li>
+                    <li><a href="/pages/page2.html" class="text-indigo-600 hover:underline">Subdirectory page (pages/page2.html) (required)</a></li>
+                </ul>
+
+                <div class="mt-8">
+                    <p class="text-sm text-slate-500">Image slots — drop your images into the indicated paths or update the src attributes.</p>
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- replace src with your image path -->
+                        <img src="images/beavertail.jpeg" alt="Hero image placeholder" class="img-spot" />
+                        <img src="images/grandicecream.jpeg" alt="Screenshot placeholder" class="img-spot" />
+                    </div>
+                </div>
+            </section>
+
+            <aside class="bg-white rounded-2xl p-6 shadow-sm">
+                <div class="mb-4 flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold">N</div>
+                    <div>
+                        <div class="font-medium text-slate-900">Nathan Project</div>
+                        <div class="text-xs text-slate-400">Simple index with required links</div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <!-- optional card image -->
+                    <img src="images/montrealtemple.jpeg" alt="Card image placeholder" class="img-spot" />
+                </div>
+
+                <div class="text-sm text-slate-500">
+                    Keep this page minimal and link only to the pages required by the assessment. Replace the three image placeholders above with your own files to improve presentation.
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="max-w-4xl mx-auto px-6 py-8 text-sm text-slate-500">
+        <div class="flex justify-between items-center">
+            <div>© <span id="year"></span> Nathan</div>
+            <div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

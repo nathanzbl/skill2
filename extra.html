@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SQL Console (Extra)</title>
+  <style>
+    body{font-family:system-ui,Arial;padding:16px;max-width:900px;margin:auto}
+    textarea{width:100%;height:160px;font-family:ui-monospace,Consolas,monospace}
+    button{padding:8px 14px;border-radius:8px;border:1px solid #ccc;cursor:pointer}
+    .bar{display:flex;gap:8px;align-items:center;margin:8px 0}
+    .meta{color:#666;font-size:14px}
+    table{border-collapse:collapse;width:100%;margin-top:10px}
+    th,td{border:1px solid #ddd;padding:6px 8px}
+    th{background:#f6f8fa;text-align:left}
+    pre{background:#f6f8fa;padding:8px;overflow:auto}
+  </style>
+</head>
+<body>
+  <h1>Something Extra: In-Browser SQL Console</h1>
+  <p>This page sends raw SQL to a PHP endpoint on the server and renders the result. It’s intentionally insecure for demo purposes only.</p>
+
+  <textarea id="sql">SELECT s.name, s.major, c.code, c.title, e.enrolled_on
+FROM enrollments e
+JOIN students s ON s.id=e.student_id
+JOIN courses  c ON c.id=e.course_id
+ORDER BY s.name, c.code;
+</textarea>
+
+  <div class="bar">
+    <button id="run">Run</button>
+    <span class="meta" id="meta"></span>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const runBtn = document.getElementById('run');
+    const txt = document.getElementById('sql');
+    const meta = document.getElementById('meta');
+    const out = document.getElementById('result');
+
+    function renderTable(rows){
+      if(!rows || rows.length === 0){
+        return '<p><em>No rows.</em></p>';
+      }
+      const cols = Object.keys(rows[0]);
+      let html = '<table><thead><tr>';
+      for(const c of cols){ html += `<th>${escapeHtml(c)}</th>`; }
+      html += '</tr></thead><tbody>';
+      for(const r of rows){
+        html += '<tr>';
+        for(const c of cols){
+          const v = r[c] === null ? '<em>null</em>' : escapeHtml(String(r[c]));
+          html += `<td>${v}</td>`;
+        }
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+      return html;
+    }
+
+    function escapeHtml(s){
+      return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    runBtn.onclick = async () => {
+      meta.textContent = 'Running...';
+      out.innerHTML = '';
+      try {
+        const form = new FormData();
+        form.append('q', txt.value);
+        const t0 = performance.now();
+        const res = await fetch('/api/query.php', { method: 'POST', body: form });
+        const t1 = performance.now();
+        const data = await res.json();
+
+        if(!res.ok){
+          meta.textContent = `Error ${res.status} (${Math.round(t1 - t0)} ms)`;
+          out.innerHTML = `<pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre>`;
+          return;
+        }
+
+        if(data.type === 'resultset'){
+          meta.textContent = `Rows: ${data.rowCount} — ${data.timeMs} ms`;
+          out.innerHTML = renderTable(data.rows) + `<details><summary>Raw JSON</summary><pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre></details>`;
+        } else {
+          meta.textContent = `OK — affected: ${data.affectedRows} — ${data.timeMs} ms`;
+          out.innerHTML = `<pre>${escapeHtml(JSON.stringify(data, null, 2))}</pre>`;
+        }
+      } catch (e){
+        meta.textContent = 'Request failed';
+        out.innerHTML = `<pre>${escapeHtml(String(e))}</pre>`;
+      }
+    };
+  </script>
+</body>
+</html>
